@@ -1,13 +1,14 @@
-from pytorch_lightning.callbacks import ModelCheckpoint, early_stopping
-from numpy.core.fromnumeric import argmax
+from utils import Utils
+from pytorch_lightning.callbacks import ModelCheckpoint
 import torch.utils.model_zoo as model_zoo
 import pytorch_lightning as pl
-from pytorch_lightning import Trainer, loggers
+from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping
 from model import ColorizationModel
-import parser
 from torch.nn import BatchNorm2d
+from torch import device, cuda, profiler
 
+DEVICE : device
 
 def pre_trained(model: ColorizationModel) -> ColorizationModel:
     """
@@ -42,17 +43,16 @@ def get_model(dic: dict, pretrained=False) -> ColorizationModel:
     return model
 
 
-def get_default() -> dict:
+def get_param() -> dict:
     # fmt: off
-    default_param = {
+    param = {
         'trainer' : {
             'max_epochs' : 100,
-            'gpus' : 1,
             'log_every_n_steps' : 20,
             'limit_train_batches' : 1.0,
             'limit_val_batches' : 1.0,
+            'gpus' : 1,
             'check_val_every_n_epoch' : 1,
-            'callbacks' : [],
         },
         'callbacks' : {
             EarlyStopping : {
@@ -89,19 +89,22 @@ def get_default() -> dict:
                     },
                 }
             },
-        }
+        },
+        'pretrained' : False,
+        'cpu' : False,
     }
     # fmt: on
-    return default_param
+    return param
 
 
 if __name__ == "__main__":
-    bypass_parser = False
-    if bypass_parser:
-        param = get_default()
-        param["model"] = get_model(param["model"])
-    else:
-        param = parser.process()
+    param = get_param()
 
+    if param['cpu']:
+        param['trainer']['gpus'] = 0
+
+
+    model = get_model(param["model"], pretrained=param['pretrained'])
     trainer = get_trainer(param["trainer"], param["callbacks"])
-    trainer.fit(param["model"])
+
+    trainer.fit(model)

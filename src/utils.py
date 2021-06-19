@@ -11,11 +11,7 @@ from typing import Any, NoReturn, Tuple
 # pts_in_hull = np.load(os.path.join(dirname, "../misc/npy/pts_in_hull.npy"))
 # prior_probs = np.load(os.path.join(dirname, "../misc/npy/prior_probs.npy"))
 
-
 class Utils:
-    # def __init__(self):
-    # self.device = device
-
     @staticmethod
     def load_im(im_path: Path or str) -> np.array:
         """
@@ -53,7 +49,7 @@ class Utils:
         im_lab = color.rgb2lab(im_rgb)
         im_L = im_lab[:, :, 0]
         img_ab = im_lab[:, :, 1:]
-        X = torch.Tensor(im_L, dtype=torch.float32)[None, :, :]
+        X = torch.Tensor(im_L)[None, :, :]
         Y = torch.tensor(np.moveaxis(img_ab, 2, 0), dtype=torch.float32)
         return (X, Y)
 

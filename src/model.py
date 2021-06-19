@@ -111,12 +111,13 @@ class ColorizationModel(pl.LightningModule):
         # fmt:on
 
         self.softmax = nn.Softmax(dim=1)
-        self.upsample = nn.Upsample(scale_factor=4, mode="bilinear")
+        self.upsample = nn.Upsample(scale_factor=4, mode="bilinear", align_corners=False)
 
         self.normalize_l = lambda x: (x - 50) / 100
         self.unnormalize_l = lambda x: (x + 50) * 100
 
         self.normalize_ab = lambda x: x / 110
+        self.normalize_ab = lambda x, y: (x/110, y/110)
         self.unnormalize_ab = lambda x: x * 110
 
     def forward(self, X):
@@ -134,7 +135,7 @@ class ColorizationModel(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         X, y = batch
         y_pred = self.forward(X)
-        loss = F.mse_loss(y_pred, y)
+        loss = F.mse_loss(*self.normalize_ab(y_pred, y))
         self.log(
             "train_loss", loss, prog_bar=True, logger=True, on_step=True, on_epoch=True
         )
@@ -143,7 +144,7 @@ class ColorizationModel(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         X, y = batch
         y_pred = self.forward(X)
-        loss = F.mse_loss(y_pred, y)
+        loss = F.mse_loss(*self.normalize_ab(y_pred, y))
         self.log(
             "val_loss", loss, prog_bar=True, logger=True, on_step=True, on_epoch=True
         )
@@ -152,7 +153,7 @@ class ColorizationModel(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         X, y = batch
         y_pred = self.forward(X)
-        loss = F.mse_loss(y_pred, y)
+        loss = F.mse_loss(*self.normalize_ab(y_pred, y))
         self.log(
             "test_loss", loss, prog_bar=True, logger=True, on_step=True, on_epoch=True
         )

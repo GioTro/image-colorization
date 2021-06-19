@@ -2,15 +2,13 @@ import torch
 from pathlib import Path
 from utils import Utils
 
-
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, dataset):
         self.dataset = dataset
-        self.util = Utils()
 
     def __getitem__(self, i):
-        im = self.util.load_im(str(self.dataset[i]))
-        X, y = self.util.preprocess_im(im)
+        im = Utils.load_im(str(self.dataset[i]))
+        X, y = Utils.preprocess_im(im)
         breakpoint
         return X, y
 
