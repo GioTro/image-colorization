@@ -10,6 +10,7 @@ class Dataset(torch.utils.data.Dataset):
     def __getitem__(self, i):
         im = self.util.load_im(str(self.dataset[i]))
         X, y = self.util.preprocess_im(im)
+        breakpoint
         return X, y
 
     def __len__(self):
@@ -32,8 +33,6 @@ def prepare(set_spec, params):
 
 
 def return_loaders(batch_size=64, num_workers=5, shuffle=True):
-    import os
-
     root = Path(__file__).parent.absolute()
 
     paths = [

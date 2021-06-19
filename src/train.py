@@ -6,6 +6,7 @@ from pytorch_lightning import Trainer, loggers
 from pytorch_lightning.callbacks import EarlyStopping
 from model import ColorizationModel
 import parser
+from torch.nn import BatchNorm2d
 
 def pre_trained(model : ColorizationModel) -> ColorizationModel:
     """
@@ -38,10 +39,11 @@ def get_model(dic : dict, pretrained = False) -> ColorizationModel:
     return model
 
 def get_default() -> dict:
+    # fmt: off
     default_param = {
         'trainer' : {
             'max_epochs' : 100,
-            'max_gpus' : 1,
+            'gpus' : 1,
             'log_every_n_steps' : 20,
             'limit_train_batches' : 1.0,
             'limit_val_batches' : 1.0,
@@ -64,18 +66,28 @@ def get_default() -> dict:
             ModelCheckpoint : {
                 'save_last' : True,
                 'verbose' : True,
-                'every_n_val_epoch' : 1,
+                'every_n_val_epochs' : 1,
             }
 
         },
         'model' : {
             ColorizationModel : {
                 'num_workers' : 6,
+                'norm_layer' : BatchNorm2d,
                 'batch_size' : 64,
                 'T_max': 1e5, 
-            }
-        },
+                'eta_min': 1e-7,
+                'optimizer_param' : {
+                    'Adam': {
+                        'lr': 3e-4, 
+                        'betas': (.90, .99),
+                        'weight_decay': 1e-3,
+                    },
+                }
+            },
+        }
     }
+    # fmt: on
     return default_param
 
 if __name__ == "__main__":

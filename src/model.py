@@ -3,18 +3,24 @@ from torch.functional import F
 import pytorch_lightning as pl
 import dataloader as dl
 import torch.nn as nn
-
+from torch.optim import Adam
+from torch.optim.lr_scheduler import CosineAnnealingLR
+from torch.nn import BatchNorm2d
 class ColorizationModel(pl.LightningModule):
     def __init__(
         self,
-        norm_layer=nn.BatchNorm2d,
+        norm_layer=BatchNorm2d,
         num_workers=6,
         batch_size=128,
         T_max=39000,
+        eta_min = 1e-7,
+        optimizer_param= {'Adam': {'lr': 3e-4, 'betas': .95, 'weight_decay': 1e-3}}
     ):
         super(ColorizationModel, self).__init__()
         self.T_max = T_max
         self.batch_size = batch_size
+        self.eta_min = eta_min
+        self.optimizer_param = optimizer_param
 
         # fmt: off
         self.data_loaders = dl.return_loaders(
@@ -151,11 +157,11 @@ class ColorizationModel(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(
-            self.parameters(), lr=3e-4, betas=self.betas, weight_decay=1e-3
-        )  # 1e-5
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-            optimizer=optimizer, eta_min=1e-7, T_max=self.T_max
+        optimizer = Adam(
+            self.parameters(), **self.optimizer_param['Adam']
+        )
+        scheduler = CosineAnnealingLR(
+            optimizer=optimizer, eta_min=self.eta_min, T_max=self.T_max
         )
         return [optimizer], [scheduler]
 

@@ -76,6 +76,7 @@ def process() -> dict:
 
     if OPT.cpu or not cuda.is_available():
         param['device'] = device('cpu')
+        param['trainer']['gpus'] = 0
     else:
         param['device'] = cuda.current_device()
 

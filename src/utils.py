@@ -12,8 +12,8 @@ from typing import Any, NoReturn, Tuple
 # prior_probs = np.load(os.path.join(dirname, "../misc/npy/prior_probs.npy"))
 
 class Utils:
-    def __init__(self, device = None):
-        self.device = device
+    #def __init__(self):
+        #self.device = device
     
     @staticmethod
     def load_im(im_path : Path or str) -> np.array:
