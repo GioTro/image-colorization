@@ -1,6 +1,6 @@
 # Image colorization
 
-> Yesus Boxum
+> Tested on tiny-imagenet. Using mse_loss, trying to make the loss function from 'Colorful Image Colorization' to work properly but returns gray predictions as is.
 
 References
 ====
