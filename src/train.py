@@ -8,10 +8,11 @@ from model import ColorizationModel
 import parser
 from torch.nn import BatchNorm2d
 
-def pre_trained(model : ColorizationModel) -> ColorizationModel:
+
+def pre_trained(model: ColorizationModel) -> ColorizationModel:
     """
-        Since the architecture is the same as https://github.com/richzhang/colorization
-        We can use their pre-trained model.
+    Since the architecture is the same as https://github.com/richzhang/colorization
+    We can use their pre-trained model.
     """
     model.load_state_dict(
         model_zoo.load_url(
@@ -22,21 +23,24 @@ def pre_trained(model : ColorizationModel) -> ColorizationModel:
     )
     return model
 
-def get_trainer(trainer_param : dict, callbacks : dict) -> Trainer:
+
+def get_trainer(trainer_param: dict, callbacks: dict) -> Trainer:
     if len(callbacks) != 0:
         clb = [c(**callbacks[c]) for c in callbacks.keys()]
-        trainer_param['callbacks'] = clb
-    
+        trainer_param["callbacks"] = clb
+
     trainer = Trainer(**trainer_param)
     return trainer
 
-def get_model(dic : dict, pretrained = False) -> ColorizationModel:
+
+def get_model(dic: dict, pretrained=False) -> ColorizationModel:
     assert len(dic) == 1
     model_class = list(dic.keys())[0]
     model = model_class(**dic[model_class])
     if pretrained:
         model = pre_trained(model)
     return model
+
 
 def get_default() -> dict:
     # fmt: off
@@ -90,13 +94,14 @@ def get_default() -> dict:
     # fmt: on
     return default_param
 
+
 if __name__ == "__main__":
     bypass_parser = False
     if bypass_parser:
         param = get_default()
-        param['model'] = get_model(param['model'])
+        param["model"] = get_model(param["model"])
     else:
         param = parser.process()
 
-    trainer = get_trainer(param['trainer'], param['callbacks'])
-    trainer.fit(param['model'])
+    trainer = get_trainer(param["trainer"], param["callbacks"])
+    trainer.fit(param["model"])

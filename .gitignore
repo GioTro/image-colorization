@@ -5,6 +5,7 @@ __pycache__/
 
 .vscode/
 dataset/
+lightning_logs/
 
 
 # C extensions

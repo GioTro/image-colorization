@@ -2,6 +2,7 @@ import torch
 from pathlib import Path
 from utils import Utils
 
+
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, dataset):
         self.dataset = dataset
@@ -15,6 +16,7 @@ class Dataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.dataset)
+
 
 def prepare(set_spec, params):
     """params = (batch_size, num_workers, shuffle)"""
@@ -44,10 +46,10 @@ def return_loaders(batch_size=64, num_workers=5, shuffle=True):
     paths = map(Path, paths)
 
     dataset = {}
-    params=(batch_size, num_workers, shuffle)
+    params = (batch_size, num_workers, shuffle)
 
     dataset["test"], dataset["train"], dataset["validation"] = map(
-        lambda x : prepare(x, params=params), paths
+        lambda x: prepare(x, params=params), paths
     )
 
     return dataset

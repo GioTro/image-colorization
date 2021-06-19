@@ -6,6 +6,8 @@ import torch.nn as nn
 from torch.optim import Adam
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.nn import BatchNorm2d
+
+
 class ColorizationModel(pl.LightningModule):
     def __init__(
         self,
@@ -13,8 +15,8 @@ class ColorizationModel(pl.LightningModule):
         num_workers=6,
         batch_size=128,
         T_max=39000,
-        eta_min = 1e-7,
-        optimizer_param= {'Adam': {'lr': 3e-4, 'betas': .95, 'weight_decay': 1e-3}}
+        eta_min=1e-7,
+        optimizer_param={"Adam": {"lr": 3e-4, "betas": 0.95, "weight_decay": 1e-3}},
     ):
         super(ColorizationModel, self).__init__()
         self.T_max = T_max
@@ -111,11 +113,11 @@ class ColorizationModel(pl.LightningModule):
         self.softmax = nn.Softmax(dim=1)
         self.upsample = nn.Upsample(scale_factor=4, mode="bilinear")
 
-        self.normalize_l = lambda x : (x - 50) / 100
-        self.unnormalize_l = lambda x : (x + 50) * 100
+        self.normalize_l = lambda x: (x - 50) / 100
+        self.unnormalize_l = lambda x: (x + 50) * 100
 
-        self.normalize_ab = lambda x : x/110
-        self.unnormalize_ab = lambda x : x*110
+        self.normalize_ab = lambda x: x / 110
+        self.unnormalize_ab = lambda x: x * 110
 
     def forward(self, X):
         conv1 = self.model1(self.normalize_l(X))
@@ -157,9 +159,7 @@ class ColorizationModel(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        optimizer = Adam(
-            self.parameters(), **self.optimizer_param['Adam']
-        )
+        optimizer = Adam(self.parameters(), **self.optimizer_param["Adam"])
         scheduler = CosineAnnealingLR(
             optimizer=optimizer, eta_min=self.eta_min, T_max=self.T_max
         )
@@ -182,8 +182,6 @@ class ColorizationModel(pl.LightningModule):
 
     def val_dataloader(self):
         return self.data_loaders["validation"]
-    
-    def predict(self, X : torch.Tensor) -> torch.Tensor:
-        return  self.forward(X)
-        
 
+    def predict(self, X: torch.Tensor) -> torch.Tensor:
+        return self.forward(X)
