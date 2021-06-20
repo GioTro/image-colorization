@@ -8,7 +8,8 @@ from model import ColorizationModel
 from torch.nn import BatchNorm2d
 from torch import device, cuda, profiler
 
-DEVICE : device
+DEVICE: device
+
 
 def pre_trained(model: ColorizationModel) -> ColorizationModel:
     """
@@ -100,11 +101,10 @@ def get_param() -> dict:
 if __name__ == "__main__":
     param = get_param()
 
-    if param['cpu']:
-        param['trainer']['gpus'] = 0
+    if param["cpu"]:
+        param["trainer"]["gpus"] = 0
 
-
-    model = get_model(param["model"], pretrained=param['pretrained'])
+    model = get_model(param["model"], pretrained=param["pretrained"])
     trainer = get_trainer(param["trainer"], param["callbacks"])
 
     trainer.fit(model)

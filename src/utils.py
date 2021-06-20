@@ -11,6 +11,7 @@ from typing import Any, NoReturn, Tuple
 # pts_in_hull = np.load(os.path.join(dirname, "../misc/npy/pts_in_hull.npy"))
 # prior_probs = np.load(os.path.join(dirname, "../misc/npy/prior_probs.npy"))
 
+
 class Utils:
     @staticmethod
     def load_im(im_path: Path or str) -> np.array:

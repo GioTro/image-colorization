@@ -2,6 +2,7 @@ import torch
 from pathlib import Path
 from utils import Utils
 
+
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, dataset):
         self.dataset = dataset
@@ -36,9 +37,9 @@ def return_loaders(batch_size=64, num_workers=5, shuffle=True):
     root = Path(__file__).parent.absolute()
 
     paths = [
-        root / "../dataset/test/",
-        root / "../dataset/train/",
-        root / "../dataset/val/",
+        root / ".." / "dataset" / "test",
+        root / ".." / "dataset" / "train",
+        root / ".." / "dataset" / "val",
     ]
 
     paths = map(Path, paths)

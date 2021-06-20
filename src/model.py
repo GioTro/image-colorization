@@ -30,7 +30,7 @@ class ColorizationModel(pl.LightningModule):
         )
 
         self.model1 = nn.Sequential(
-            nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=1, bias=True), 
+            nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=1, bias=True),
             nn.ReLU(True),
             nn.Conv2d(64, 64, kernel_size=3, stride=2, padding=1, bias=True),
             nn.ReLU(True),
@@ -44,7 +44,7 @@ class ColorizationModel(pl.LightningModule):
             nn.ReLU(True),
             norm_layer(128)
         )
-        
+
         self.model3 = nn.Sequential(
             nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1, bias=True),
             nn.ReLU(True),
@@ -83,7 +83,7 @@ class ColorizationModel(pl.LightningModule):
             nn.Conv2d(512, 512, kernel_size=3, dilation=2, stride=1, padding=2, bias=True),
             nn.ReLU(True),
             norm_layer(512)
-        )        
+        )
 
         self.model7 = nn.Sequential(
             nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1, bias=True),
@@ -111,13 +111,15 @@ class ColorizationModel(pl.LightningModule):
         # fmt:on
 
         self.softmax = nn.Softmax(dim=1)
-        self.upsample = nn.Upsample(scale_factor=4, mode="bilinear", align_corners=False)
+        self.upsample = nn.Upsample(
+            scale_factor=4, mode="bilinear", align_corners=False
+        )
 
         self.normalize_l = lambda x: (x - 50) / 100
         self.unnormalize_l = lambda x: (x + 50) * 100
 
-        self.normalize_ab = lambda x: x / 110
-        self.normalize_ab = lambda x, y: (x/110, y/110)
+        # self.normalize_ab = lambda x: x / 110
+        self.normalize_ab = lambda x, y: (x / 110, y / 110)
         self.unnormalize_ab = lambda x: x * 110
 
     def forward(self, X):
